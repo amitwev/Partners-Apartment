@@ -1,6 +1,6 @@
 module.exports = function(app){
     //For user login 
-    app.get('/login', (req, res) => {
+    app.post('/login', (req, res) => {
         console.log("inside /login!");
         res.status(200).json({
             endPoint:'Login page', 

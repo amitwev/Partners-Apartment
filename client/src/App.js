@@ -12,6 +12,11 @@ class App extends Component{
       route:'Login'
     }
   }
+  handleSubmit = (event) => {
+    console.log("inside submit");
+    console.log(event.target.elements);
+    event.preventDefault();
+  }
   onRouteChange = (path) => {
     console.log("on route change click = ", path)
     this.setState({
@@ -19,10 +24,10 @@ class App extends Component{
     })
   }
   render(){
-      switch(this.state.route){
+      {/*switch(this.state.route){
         case 'Login':
           return(
-            <Login onRouteChange={this.onRouteChange}/>
+            <Login onRouteChange={this.onRouteChange} handleSubmit={this.handleSubmit}/>
           )
         case 'Register': 
           return(
@@ -30,7 +35,7 @@ class App extends Component{
           )
         case 'ForgotPassword': 
           return(
-            <ForgotPassword onRouteChange={this.onRouteChange}/>
+            <ForgotPassword onRouteChange={this.onRouteChange} />
           )
         default:
             return(
@@ -39,6 +44,10 @@ class App extends Component{
               </div>
             )
       }
+    */}
+    return(
+      <Login />
+    )
   }
 }
 
