@@ -24,14 +24,14 @@ class App extends Component{
     })
   }
   render(){
-      {/*switch(this.state.route){
+      switch(this.state.route){
         case 'Login':
           return(
-            <Login onRouteChange={this.onRouteChange} handleSubmit={this.handleSubmit}/>
+            <Login onRouteChange={this.onRouteChange}/>
           )
         case 'Register': 
           return(
-            <Register onRouteChange={this.onRouteChange}/>
+            <Register onRouteChange={this.onRouteChange} onChange={this.handleChange}/>
           )
         case 'ForgotPassword': 
           return(
@@ -44,10 +44,6 @@ class App extends Component{
               </div>
             )
       }
-    */}
-    return(
-      <Login />
-    )
   }
 }
 

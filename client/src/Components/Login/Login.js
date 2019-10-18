@@ -59,9 +59,10 @@ class Login extends Component{
     event.preventDefault();
     const data = this.state; 
     console.log("data = ", data)
-    const resLogin = this.postLogin(data);
+    const resLogin = this.postLogin(JSON.stringify(data));
   }
   postLogin = async (data) => {
+    console.log("data in func = ",data)
     const response = await fetch('/login', {
         method:'POST',
         headers:{
@@ -69,12 +70,27 @@ class Login extends Component{
         }, 
         body: data
       });
-    console.log(response);
-
-
+    const status = response.status;
+    console.log(status);
+    const res = await response.json(); 
+    console.log(res)
+    switch(status){
+      case '200':
+        console.log("login status = ", status)
+      break;
+      case '400':
+          console.log("login status = ", status)
+      break; 
+      case '500':
+          console.log("login status = ", status)
+      break;
+      default:
+        console.log("login status is default = ", status)
+      break;
+    }
   }
   render(){
-    const { classes } = this.props;
+    const { classes, onRouteChange } = this.props;
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -125,12 +141,12 @@ class Login extends Component{
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                <Link href="#" variant="body2" onClick={() => onRouteChange('ForgotPassword')}>
                   Forgot password?
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="#" variant="body2" onClick={() => onRouteChange('Register')}>
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

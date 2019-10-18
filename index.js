@@ -3,9 +3,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 
 const app = express(); 
-
 app.use(bodyParser.json());
-
 require('./imports.js')(app);
 
 const PORT = process.env.PORT || 3001; 
