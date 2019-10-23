@@ -2,7 +2,7 @@ console.log("inside db connection");
 
 const { Client } = require('pg'); 
 module.exports = function(){
-        const dbDetails = require('./dbDetails.js');
+        const dbDetails = require('./dbDetailsStg.js');
         const env = process.env.NODE_ENV || 'development';
         let connectionString = {}; 
         if(env === 'production'){
