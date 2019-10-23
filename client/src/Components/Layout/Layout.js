@@ -1,4 +1,5 @@
 import React, { Component } from 'react'; 
+import Footer from '../Footer/Footer,js'; 
 
 class Layout extends Component{
     constructor(){
@@ -11,6 +12,14 @@ class Layout extends Component{
             hasHouse:'', 
             
         }
+    }
+    render(){
+        return(
+            <div>
+                
+                <Footer />
+            </div>
+        )
     }
 }
 export default Layout; 

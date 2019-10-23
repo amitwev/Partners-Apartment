@@ -1,23 +1,30 @@
 const express = require('express'); 
 const path = require('path');
 const bodyParser = require('body-parser');
-
 const app = express(); 
 app.use(bodyParser.json());
 require('./imports.js')(app);
 
-const PORT = process.env.PORT || 3001; 
-//Basic Site - Node + react + db connection 
-/*need to delete 
-//db.connect();
-//db.query('SELECT * FROM users;', (err, res) => {
-//   if (err) throw err;
-//   for (let row of res.rows) {
-//     console.log(JSON.stringify(row));
+// //THIS REQUIRE DB 
+// let db = require('./server/DB/dbConnection')();
+// //CONNECT AND QUERY
+// console.log("connected to db");
+// db.connect();
+// const query = {
+//   text: `insert into users("firstName", "lastName", email, phone) VALUES($1, $2, $3, $4)`,
+//   values: ['brianc', '','', 'testing']    
 //   }
-//   db.end();
-/// });
-*/
+
+// db.query(query, (err, res) => { 
+//   if (err) console.log(err.detail);
+//   else{
+//     console.log(res)
+//   }
+// })
+// //END 
+
+const PORT = process.env.PORT || 3001; 
+
 app.get('/api', (req, res) => {
     console.log("Inside /api");
     res.status(200).json({
