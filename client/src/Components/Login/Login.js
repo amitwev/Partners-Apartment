@@ -2,12 +2,16 @@ import React, { Component } from 'react';
 import { Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Grid, withStyles, Typography, Container } from '@material-ui/core/';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Footer from '../Footer/Footer.js'; 
+//import AuthHelper from '../AuthHelper/AuthHelper.js';
 
 const styles = theme => ({
   '@global': {
     body: {
       backgroundColor: theme.palette.common.white,
     },
+  },
+  pointer: {
+    cursor:'pointer'
   },
   paper: {
     marginTop: theme.spacing(8),
@@ -32,24 +36,53 @@ class Login extends Component{
   constructor(){
     super();
     this.state = {
-      email:'', 
-      password:''
+      email: '', 
+      password:'', 
+      rememberMe: false
     }
+    console.log(this.state)
+  }
+  async componentDidMount(){
+    const userEmailSaved = await localStorage.getItem('email'); 
+    const checkboxSave = await localStorage.getItem('rememberMe');
+    console.log("componened did mount", userEmailSaved, checkboxSave)
+    if(checkboxSave){
+      console.log("inside checkbox save");
+      await this.setState({
+      email: userEmailSaved, 
+      rememberMe: checkboxSave
+    }, ()=> console.log(this.state))
+    }    
   }
   handleChange = (event) => {
+    console.log(event.target)
     const name = event.target.name; 
-    const value = event.target.value; 
+    const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
     this.setState({
       [name]: value
     })
     console.log("state = ", this.state)
   }
-  onSubmit = (event) => {
+  onSubmit = async (event) => {
+    console.log(event.target)
     console.log("login submit clicked");
     event.preventDefault();
     const data = this.state; 
     console.log("data = ", data)
-    const resLogin = this.postLogin(JSON.stringify(data));
+    const resLogin = await this.postLogin(JSON.stringify(data));
+    console.log("res login = ", resLogin.token);
+    if(resLogin.success && !resLogin.hasError && !!resLogin.token){
+      console.log("inside the if for login if = ",resLogin) ;
+      const { email, rememberMe } = this.state; 
+      localStorage.setItem('rememberMe', rememberMe);
+      localStorage.setItem('email', rememberMe ? email : '');
+      localStorage.setItem('token', resLogin.token);
+      this.props.history.replace('/homepage');      
+      //add here redirect to homepage
+    }else{
+      console.log("inside else in login");
+      //add pop up -> invalid user name/pass
+    }
   }
   postLogin = async (data) => {
     console.log("data in func = ",data)
@@ -60,27 +93,12 @@ class Login extends Component{
         }, 
         body: data
       });
-    const status = response.status;
-    console.log(status);
     const res = await response.json(); 
-    console.log(res)
-    switch(status){
-      case '200':
-        console.log("login status = ", status)
-      break;
-      case '400':
-          console.log("login status = ", status)
-      break; 
-      case '500':
-          console.log("login status = ", status)
-      break;
-      default:
-        console.log("login status is default = ", status)
-      break;
-    }
+    return res; 
   }
   render(){
-    const { classes, onRouteChange } = this.props;
+    console.log("render invoke ")
+    const { classes } = this.props;
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -93,6 +111,7 @@ class Login extends Component{
           </Typography>
           <form className={classes.form} noValidate name="login" onSubmit={this.onSubmit}>
             <TextField
+              value={this.state.email}
               variant="outlined"
               margin="normal"
               required
@@ -117,8 +136,11 @@ class Login extends Component{
               onChange={this.handleChange}
             />
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              value={this.state.rememberMe}
+              control={<Checkbox color="primary" />}
               label="Remember me"
+              name="rememberMe"
+              onChange={this.handleChange}
             />
             <Button
               type="submit"
@@ -131,12 +153,12 @@ class Login extends Component{
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2" onClick={() => onRouteChange('ForgotPassword')}>
+                <Link className={classes.pointer} variant="body2" href="/forgotpassword">
                   Forgot password?
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2" onClick={() => onRouteChange('Register')}>
+                <Link className={classes.pointer} variant="body2" href="/register">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

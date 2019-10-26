@@ -16,6 +16,9 @@ const styles = theme => ({
       backgroundColor: theme.palette.common.white,
     },
   },
+  pointer: {
+    cursor:'pointer'
+  },
   paper: {
     marginTop: theme.spacing(8),
     display: 'flex',
@@ -46,15 +49,20 @@ class Register extends Component{
       password:'',
     }
   }
-  onSubmit = (event) => {
+  onSubmit = async (event) => {
     console.log("register submit clicked");
     event.preventDefault();
     const data = this.state; 
     console.log("data = ", data)
-    const resLogin = this.postRegister(JSON.stringify(data));
+    const resLogin = await this.postRegister(JSON.stringify(data));
+    console.log(resLogin);
+    if(!resLogin.hasError && resLogin.userAdded && resLogin.password){
+      //open pop up user added -> redirect to homepage 
+    }else{
+      //open pop up user not add -> close -> stay in register
+    }
   }
   postRegister = async (data) => {
-    console.log("inside post register function =", data)
     const response = await fetch('/register', {
       method:'POST',
       headers:{
@@ -63,7 +71,7 @@ class Register extends Component{
       body: data
     });
     const res = await response.json();
-    console.log(res)
+    return res; 
   }
   handleChange = (event) => {
     const name = event.target.name; 
@@ -74,7 +82,7 @@ class Register extends Component{
     console.log("state = ", this.state)
   }
   render(){
-    const {classes, onRouteChange, handleChange} = this.props;
+    const { classes } = this.props;
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -160,7 +168,7 @@ class Register extends Component{
             </Button>
             <Grid container justify="flex-end">
               <Grid item>
-                <Link href="#" variant="body2" onClick={() => onRouteChange('Login')}>
+                <Link className={classes.pointer} variant="body2" href="/">
                   Already have an account? Sign in
                 </Link>
               </Grid>

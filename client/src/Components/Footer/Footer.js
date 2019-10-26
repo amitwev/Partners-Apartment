@@ -19,6 +19,9 @@ const useStyles = makeStyles(theme => ({
     marginTop: 'auto',
     backgroundColor: 'white',
   },
+  center:{
+    textAlign:"center"
+  }
 }));
 
 export default function StickyFooter() {
@@ -29,7 +32,7 @@ export default function StickyFooter() {
       <CssBaseline />
         <footer className={classes.footer}>
             <Container maxWidth="sm">
-                <Typography>Partners Apartment Application</Typography>
+                <Typography className={classes.center}>Partners Apartment Application</Typography>
                 <Typography variant="body2" color="textSecondary" align="center">
                     {'Copyright © Amit Salim'}
                 </Typography>

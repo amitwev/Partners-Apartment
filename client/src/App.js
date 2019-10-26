@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import './App.css';
 
 import Register from './Components/Register/Register.js';
 import Login from './Components/Login/Login.js';
 import ForgotPassword from './Components/ForgotPassword/ForgotPassword.js';
-
+import Layout from './Components/Layout/Layout.js';
 class App extends Component{
   constructor(){
     super(); 
@@ -12,38 +13,17 @@ class App extends Component{
       route:'Login'
     }
   }
-  handleSubmit = (event) => {
-    console.log("inside submit");
-    console.log(event.target.elements);
-    event.preventDefault();
-  }
-  onRouteChange = (path) => {
-    console.log("on route change click = ", path)
-    this.setState({
-      route:path
-    })
-  }
   render(){
-      switch(this.state.route){
-        case 'Login':
-          return(
-            <Login onRouteChange={this.onRouteChange}/>
-          )
-        case 'Register': 
-          return(
-            <Register onRouteChange={this.onRouteChange} onChange={this.handleChange}/>
-          )
-        case 'ForgotPassword': 
-          return(
-            <ForgotPassword onRouteChange={this.onRouteChange} />
-          )
-        default:
-            return(
-              <div>
-                Homepage!
-              </div>
-            )
-      }
+    return(
+      <BrowserRouter>
+        <Switch>
+          <Route exact path='/' component={Login}/>
+          <Route exact path='/register' component={Register}/>
+          <Route exact path='/forgotpassword' component={ForgotPassword}/>
+          <Route path='/homepage' component={Layout}/>
+        </Switch>
+      </BrowserRouter>
+    )
   }
 }
 

@@ -5,33 +5,29 @@ const app = express();
 app.use(bodyParser.json());
 require('./imports.js')(app);
 
-// //THIS REQUIRE DB 
-// let db = require('./server/DB/dbConnection')();
-// //CONNECT AND QUERY
-// console.log("connected to db");
-// db.connect();
-// const query = {
-//   text: `insert into users("firstName", "lastName", email, phone) VALUES($1, $2, $3, $4)`,
-//   values: ['brianc', '','', 'testing']    
-//   }
-
-// db.query(query, (err, res) => { 
-//   if (err) console.log(err.detail);
-//   else{
-//     console.log(res)
-//   }
-// })
-// //END 
+const jwt = require('./server/JWT/jwt.js'); 
 
 const PORT = process.env.PORT || 3001; 
+//Set headers
+app.use((req, res, next) => {
+  console.log(req.headers);
+  res.setHeader('Access-Control-Allow-Headers', 'Content-type,Authorization');
+  next();
+});
 
-app.get('/api', (req, res) => {
+//need to add this to every request -> using the token -> and need to use exjwt to every file
+app.get('/api', jwt.getExpressJwt(), (req, res) => {
     console.log("Inside /api");
     res.status(200).json({
         endPoint:'api call to /api', 
         api: 'Version 1'
     })
 })
+app.get('/homepage', jwt.getExpressJwt(), (req,res) => {
+  console.log("Web Token Checked.");
+  res.send('You are authenticated');
+})
+
 if (process.env.NODE_ENV === 'production') {
     // Serve any static files
     app.use(express.static(path.join(__dirname, 'client/build')));

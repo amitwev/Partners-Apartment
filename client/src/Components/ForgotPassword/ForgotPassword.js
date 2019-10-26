@@ -17,6 +17,9 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: theme.palette.common.white,
     },
   },
+  pointer: {
+    cursor:'pointer'
+  },
   paper: {
     marginTop: theme.spacing(8),
     display: 'flex',
@@ -71,7 +74,7 @@ const ForgotPassword = ({ onRouteChange }) => {
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link href="#" variant="body2" onClick={() => onRouteChange('Login')}>
+              <Link className={classes.pointer} variant="body2" href="/">
                 Already have an account? Sign in
               </Link>
             </Grid>

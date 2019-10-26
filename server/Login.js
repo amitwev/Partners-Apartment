@@ -1,42 +1,73 @@
+//Tokens
+const jwt = require('./JWT/jwt.js'); 
 //THIS REQUIRE DB 
-let db = require('./DB/dbConnection')();
+let db = require('./DB/db.js');
+const passHandler = require('./passHandler/passHandler.js'); 
 //CONNECT AND QUERY
 
 module.exports = function(app){
     //For user login 
-    app.post('/login', (req, res) => {
-        console.log("body = ",req.body);
-        res.status(200).json({
-            endPoint:'Login page', 
-            api: 'Version 1'
-        })
-    })
-    //For register new user 
-    app.post('/Register', (req,res) => {
-        let fUserAdd = false; 
-        db.connect();
-        const { email, firstName, lastName, phone, password } = req.body;
-        console.log("inside register new user", email, firstName, lastName, phone, password ); 
+    app.post('/login', async (req, res) => {
+        const { email, password } = req.body; 
+        console.log("email = ", email , ", pass = ", password);
         const query = {
-        text: `insert into users("firstName", "lastName", email, phone) VALUES($1, $2, $3, $4)`,
-        values: [firstName, lastName, email, phone]    
+            text: `SELECT * FROM userspassword where email = $1`, 
+            values: [email]
         }
-        db.query(query, (err, user) => { 
-        if (err) {
-            console.log(err.detail);
-            res.status(409).json(err.detail);
+        const result = await db.queryObj(query); 
+        console.log("result from query db = ", result);
+        if(result.rowCount > 0 && email === result.rows[0].email && await passHandler.comparePasswords(password, result.rows[0].password)){
+            console.log("same user, can connect"); 
+            let token = jwt.generateToken(email);
+            res.status(200).json({
+                success: true, 
+                hasError:false,
+                token,
+            })
+        }else{
+            console.log("not same user in login"); 
+            res.status(401).json({
+                success: false,
+                hasError:true,
+                token: null
+            })
         }
-        else{
-            fUserAdd = true; 
-            console.log(user);
-            ///*
-            res.status(200).json(user)
-        }
-        })
-        if(fUserAdd){
+     })
 
+    //For register new user 
+    app.post('/Register', async (req,res) => {
+        const { email, password, firstName, lastName, phone } = req.body;
+        const queryUser = {
+            text: `insert into users("firstName", "lastName", email, phone) VALUES($1, $2, $3, $4)`,
+            values: [firstName, lastName, email, phone]    
         }
+        const hashPassword = await passHandler.encryptPassword(password); 
+        const queryPass = {
+            text: `INSERT INTO userspassword (email, password) VALUES ($1, $2)`, 
+            values:[email, hashPassword.hash]
+        }
+        const resultUser = db.queryObj(queryUser)
+        const resultPass = db.queryObj(queryPass)
+        Promise.all([resultUser, resultPass])
+            .then((values) => {
+                if(values[0].rowCount == 1 && values[1].rowCount == 1){ 
+                    console.log("inside user added");
+                    res.status(200).json({
+                        hasError: false, 
+                        userAdded: true, 
+                        password:true
+                    })
+                }
+            })
+            .catch((error) => {
+                console.log("inside error in register = ", error)
+                res.status(409).json({
+                    hasError: true, 
+                    details: error.detail
+                })
+            }) 
     })
+
     //For forgor password 
     app.post('/forgotPassword', (req,res) => {
         console.log("inside forgot password"); 
