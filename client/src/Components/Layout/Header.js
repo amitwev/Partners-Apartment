@@ -1,6 +1,16 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Toolbar, Button, Typography, Link } from '@material-ui/core';
+import { Container, Toolbar, Button, Typography } from '@material-ui/core';
+import AuthHelper from '../AuthHelper/AuthHelper';
+//
+import MenuList from '@material-ui/core/MenuList';
+import MenuItem from '@material-ui/core/MenuItem';
+import { Divider } from '@material-ui/core';
+//react-router-dom
+import { Link as LinkRouter } from "react-router-dom";
+//
+
+const authHelper = new AuthHelper();
 
 const useStyles = makeStyles(theme => ({
     toolbar: {
@@ -10,8 +20,10 @@ const useStyles = makeStyles(theme => ({
       flex: 1,
     },
     toolbarSecondary: {
-      justifyContent: 'space-between',
       overflowX: 'auto',
+      display:'flex',
+      justifyContent:'center', 
+      alignItems:'center',
     },
     toolbarLink: {
       padding: theme.spacing(1),
@@ -66,58 +78,56 @@ const useStyles = makeStyles(theme => ({
     sidebarSection: {
       marginTop: theme.spacing(3),
     },
-    footer: {
-      backgroundColor: theme.palette.background.paper,
-      marginTop: theme.spacing(8),
-      padding: theme.spacing(6, 0),
+    links: {
+      textDecoration: 'none',
+      color: 'black', 
+      display:'inline-block',
+      marginLeft:'25px', 
     },
+    
   }));
-  const sections = [
-    'Notes',
-    'Apartment Details',
-    'User Details', 
-    'Summary',
-  ];
-const Header = () => {
-    const classes = useStyles();
+  const Header = ( props ) => {
+      const classes = useStyles();
+      const logOutUser = () => {
+      console.log("log out clicked");
+      authHelper.logout(); 
+      console.log("token", localStorage.getItem('token'))
+      window.location.reload(false);
+    }
+    const { currentLocation } = props;
     return(
-        <Container maxWidth="lg">
-                <Toolbar className={classes.toolbar}>
-                    <Button size="small">
-                        Home
-                    </Button>
-                <Typography
-                    component="h2"
-                    variant="h5"
-                    color="inherit"
-                    align="center"
-                    noWrap
-                    className={classes.toolbarTitle}
-                >
-                    Partners Apartment Application
-                </Typography>
-                    <Button variant="outlined" size="small">
-                        Logout
-                    </Button>
-                </Toolbar>
-                <Toolbar 
-                    component="nav" 
-                    variant="dense" 
-                    className={classes.toolbarSecondary}>
-                        {sections.map(section => (
-                            <Link
-                                color="inherit"
-                                noWrap
-                                key={section}
-                                variant="body2"
-                                href={section.replace(/\s+/g, '')}
-                                className={classes.toolbarLink}
-                                >
-                                {section}
-                            </Link>
-                        ))}
-                </Toolbar>
-            </Container>
+      <Container maxWidth="lg">
+        <Toolbar className={classes.toolbar}>
+          <Button size="small">
+              Home
+          </Button>
+          <Typography
+              component="h2"
+              variant="h5"
+              color="inherit"
+              align="center"
+              noWrap
+              className={classes.toolbarTitle}
+          >
+              Partners Apartment Application
+          </Typography>
+          <Button variant="outlined" size="small" onClick={logOutUser}>
+              Logout
+          </Button>
+        </Toolbar>
+        <Toolbar 
+            component="nav" 
+            variant="dense" 
+            className={classes.toolbarSecondary}>
+              <MenuList>
+                <LinkRouter to="/homepage"><MenuItem selected={currentLocation === '/homepage'} className={classes.links}>Summary</MenuItem></LinkRouter>
+                <LinkRouter to="/userDetails"><MenuItem selected={currentLocation === '/userDetails'} className={classes.links}>User Details</MenuItem></LinkRouter>
+                <LinkRouter to="/apartmentDetails"><MenuItem selected={currentLocation === '/apartmentDetails'} className={classes.links}>Apartment Details</MenuItem></LinkRouter>
+                <LinkRouter to="/Notes"><MenuItem selected={currentLocation === '/Notes'} className={classes.links}>Notes</MenuItem></LinkRouter>
+              </MenuList>
+        </Toolbar>
+        <Divider light />
+      </Container>
     )
 }
 export default Header; 

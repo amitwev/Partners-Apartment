@@ -1,10 +1,20 @@
 import React, { Component } from 'react'; 
+import { compose } from 'recompose'
+
 import WithAuthComponent from '../AuthHelper/WithAuthComponenet';
 
 import Footer from '../Footer/Footer.js'; 
 import Header from './Header';
 import AuthHelper from '../AuthHelper/AuthHelper'; 
-console.log(AuthHelper.fetch)
+import UserDetails from '../Main/UserDetails';
+import ApartmentDetails from '../Main/ApartmentDetails'; 
+import Summary from '../Main/Summary';
+import Notes from '../Main/Notes';
+//
+import { Switch, BrowserRouter, Route, withRouter  } from 'react-router-dom';
+
+const authHelper = new AuthHelper();
+console.log(AuthHelper)
 class Layout extends Component{
     constructor( props ){
         super( props );
@@ -17,28 +27,26 @@ class Layout extends Component{
             route:'homepage'
         }
     }
-    componentDidMount(){
-        const email = localStorage.getItem('email');
-        // const userDetails = AuthHelper.fetch('/getUserDetails', {
-        //     method: 'POST',
-        //     body: JSON.stringify({
-        //         email: email
-        //     })
-        // });
-        
+    async componentDidMount(){
+ 
     }
+ 
     render(){
-        console.log(this.props);
         return(
-            <div>
-                <Header />
-                {/*
-                    <Menu />
-                    <Main />
-                */}
+            <BrowserRouter>
+                <Header currentLocation={this.props.location.pathname}/>
+                <Switch>
+                    <Route path="/Homepage" component={Summary} exact/>
+                    <Route path="/ApartmentDetails" component={ApartmentDetails} exact/>
+                    <Route path="/UserDetails" component={UserDetails} exact/>
+                    <Route path="/Notes" component={Notes} exact/>
+                </Switch>
                 <Footer />
-            </div>
+            </BrowserRouter>
         )
     }
 }
-export default WithAuthComponent(Layout); 
+export default compose(
+    WithAuthComponent,
+    withRouter
+)(Layout); 

@@ -4,10 +4,6 @@ class AuthHelper{
     constructor(domain){
         this.domain = domain || "http://localhost:3000";
     }
-
-    login = (email, password) => {
-
-    }
     isLogIn = () => {
         const token = this.getToken(); 
         return !!token && !this.isTokenExpired(token); 
@@ -40,24 +36,35 @@ class AuthHelper{
         localStorage.removeItem("token");
     }
     fetch = (url, options) => {
+        console.log("inside fetch helper", url, options)
         const headers = {
             'Content-Type': 'application/json'
         }
         if(this.isLogIn()){
+            console.log("added auth")
             headers['Authorization'] = 'Bearer ' + this.getToken()
         }
+        console.log("headers = ",  headers); 
+        console.log("url = ", url, "options = ", options)
         return fetch(url, {
             headers, 
             ...options
         })
-            .then(this.checkStatusResponse)
-            .then(response => response.json())
+            .then(response => {
+                console.log("response from server = ", response)
+                return response.json()
+            })
+            .catch(e => {
+                console.log("something wrong is fetch")
+                throw e;
+            })
     }
     checkStatusResponse = (response) => {
         if(response.status === 200){
-
+            return response;
         }else{
             const error = new Error(response.statusText)//Need to check this one !
+            console.log("The error from chek = ", error);
             error.response = response; 
             throw error;
         }

@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Grid, withStyles, Typography, Container } from '@material-ui/core/';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Footer from '../Footer/Footer.js'; 
-//import AuthHelper from '../AuthHelper/AuthHelper.js';
-
+import AuthHelper from '../AuthHelper/AuthHelper.js';
+const authHelper = new AuthHelper();
 const styles = theme => ({
   '@global': {
     body: {
@@ -43,6 +43,10 @@ class Login extends Component{
     console.log(this.state)
   }
   async componentDidMount(){
+    if(authHelper.isLogIn()){
+      console.log("client already login -> redirect");
+      this.props.history.replace('/homepage'); 
+    }
     const userEmailSaved = await localStorage.getItem('email'); 
     const checkboxSave = await localStorage.getItem('rememberMe');
     console.log("componened did mount", userEmailSaved, checkboxSave)
@@ -78,8 +82,7 @@ class Login extends Component{
       localStorage.setItem('email', rememberMe ? email : '');
       localStorage.setItem('token', resLogin.token);
       this.props.history.replace('/homepage');      
-      //add here redirect to homepage
-    }else{
+     }else{
       console.log("inside else in login");
       //add pop up -> invalid user name/pass
     }
