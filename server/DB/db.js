@@ -18,6 +18,21 @@ module.exports = {
                 });
         })        
     }, 
+    query: async function(str){
+        return new Promise(function(resolve, reject){
+            let db = require ('./dbConnection')();
+            db.connect();
+            console.log("inside DB simple select query"); 
+            db.query(str)
+                .then(res => {
+                    resolve(res)
+                })
+                .catch(e => {
+                    console.log("inside reject for select =", e);
+                    reject(e)
+                })
+        })
+    },
     getUserDetails: async function(email){
         return new Promise(function(resolve, reject){
             console.log("insid get user details");

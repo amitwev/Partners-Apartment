@@ -2,7 +2,7 @@
 const jwt = require('./JWT/jwt.js'); 
 //THIS REQUIRE DB 
 let db = require('./DB/db.js');
-const passHandler = require('./passHandler/passHandler.js'); 
+const passHandler = require('./hashHandler/hashHandler.js'); 
 //CONNECT AND QUERY
 
 module.exports = function(app){
@@ -16,7 +16,7 @@ module.exports = function(app){
         }
         const result = await db.queryObj(query); 
         console.log("result from query db = ", result);
-        if(result.rowCount > 0 && email === result.rows[0].email && await passHandler.comparePasswords(password, result.rows[0].password)){
+        if(result.rowCount > 0 && email === result.rows[0].email && await passHandler.compare(password, result.rows[0].password)){
             console.log("same user, can connect"); 
             let token = jwt.generateToken(email);
             res.status(200).json({
@@ -41,7 +41,7 @@ module.exports = function(app){
             text: `insert into users("firstName", "lastName", email, phone) VALUES($1, $2, $3, $4)`,
             values: [firstName, lastName, email, phone]    
         }
-        const hashPassword = await passHandler.encryptPassword(password); 
+        const hashPassword = await passHandler.encrypt(password); 
         const queryPass = {
             text: `INSERT INTO userspassword (email, password) VALUES ($1, $2)`, 
             values:[email, hashPassword.hash]

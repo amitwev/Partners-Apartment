@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt'); 
-console.log("inside pass handler ");
+console.log("inside hash handler ");
+const saltRounds = 10;
 module.exports = {
-    encryptPassword: async function(password){
+    encrypt: async function(password){
         return new Promise(function(resolve, reject){
-            const saltRounds = 10;
             bcrypt.hash(password, saltRounds, function(err, hash) {
                 if (err) reject(err); 
                 else{
@@ -16,7 +16,7 @@ module.exports = {
               });
         })
     },
-    comparePasswords: async function(password, hashPassword){
+    compare: async function(password, hashPassword){
         return new Promise(function(resolve, reject){
             bcrypt.compare(password, hashPassword, function(err, res){
                 if (err) reject(err); 
@@ -26,5 +26,5 @@ module.exports = {
                 }
             })
         })
-    }
+    },
 }

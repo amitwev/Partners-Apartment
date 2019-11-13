@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { css } from '@emotion/core';
 // Another way to import. This is recommended to reduce bundle size
-import CircleLoader from 'react-spinners/CircleLoader';
+import RingLoader from 'react-spinners/RingLoader';
  
 // Can be a string as well. Need to ensure each key-value pair ends with ;
 const override = css`
-    display: block;
-    margin: 0 auto;
-    border-color: red;
+  position: fixed;
+  top: 40%;
+  height: 100%;
+  width: 100%;
+  left: 50%;
 `;
  
 class Loading extends Component {
@@ -20,10 +22,10 @@ class Loading extends Component {
   render() {
     return (
       <div className='sweet-loading'>
-        <CircleLoader
+        <RingLoader
           css={override}
           sizeUnit={"px"}
-          size={150}
+          size={60}
           color={'#123abc'}
           loading={this.state.loading}
         />

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Grid, withStyles, Typography, Container } from '@material-ui/core/';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Footer from '../Footer/Footer.js'; 
+import Footer from '../Layout/Footer'; 
 import AuthHelper from '../AuthHelper/AuthHelper.js';
 const authHelper = new AuthHelper();
 const styles = theme => ({
@@ -40,55 +40,44 @@ class Login extends Component{
       password:'', 
       rememberMe: false
     }
-    console.log(this.state)
   }
   async componentDidMount(){
     if(authHelper.isLogIn()){
-      console.log("client already login -> redirect");
       this.props.history.replace('/homepage'); 
+    }else{
+      const userEmailSaved = await localStorage.getItem('email'); 
+      const checkboxSave = await localStorage.getItem('rememberMe');
+      if(checkboxSave){
+        await this.setState({
+          email: userEmailSaved, 
+          rememberMe: checkboxSave
+      })
     }
-    const userEmailSaved = await localStorage.getItem('email'); 
-    const checkboxSave = await localStorage.getItem('rememberMe');
-    console.log("componened did mount", userEmailSaved, checkboxSave)
-    if(checkboxSave){
-      console.log("inside checkbox save");
-      await this.setState({
-      email: userEmailSaved, 
-      rememberMe: checkboxSave
-    }, ()=> console.log(this.state))
+    
     }    
   }
   handleChange = (event) => {
-    console.log(event.target)
     const name = event.target.name; 
     const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
     this.setState({
       [name]: value
     })
-    console.log("state = ", this.state)
   }
   onSubmit = async (event) => {
-    console.log(event.target)
-    console.log("login submit clicked");
     event.preventDefault();
     const data = this.state; 
-    console.log("data = ", data)
     const resLogin = await this.postLogin(JSON.stringify(data));
-    console.log("res login = ", resLogin.token);
     if(resLogin.success && !resLogin.hasError && !!resLogin.token){
-      console.log("inside the if for login if = ",resLogin) ;
       const { email, rememberMe } = this.state; 
       localStorage.setItem('rememberMe', rememberMe);
       localStorage.setItem('email', rememberMe ? email : '');
       localStorage.setItem('token', resLogin.token);
       this.props.history.replace('/homepage');      
      }else{
-      console.log("inside else in login");
       //add pop up -> invalid user name/pass
     }
   }
   postLogin = async (data) => {
-    console.log("data in func = ",data)
     const response = await fetch('/login', {
         method:'POST',
         headers:{
@@ -100,7 +89,6 @@ class Login extends Component{
     return res; 
   }
   render(){
-    console.log("render invoke ")
     const { classes } = this.props;
     return (
       <Container component="main" maxWidth="xs">

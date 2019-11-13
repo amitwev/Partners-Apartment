@@ -16,7 +16,6 @@ const WithAuthComponent = (BaseComponent) => {
             }else{
                 try{
                     const confirm = authHelper.getConfirm(); 
-                    //console.log("got confirm = ", confirm);
                     this.setState({
                         confirm: confirm, 
                         loaded: true
@@ -30,10 +29,8 @@ const WithAuthComponent = (BaseComponent) => {
         }
         render(){
             if(this.state.loaded === true && this.state.confirm){
-                console.log("CONFIRM!!!");
                 return <BaseComponent history={this.props.history} confirm={this.state.confirm} />
             }else{
-                console.log("NOT confirm!");
                 return null;
             }
         }

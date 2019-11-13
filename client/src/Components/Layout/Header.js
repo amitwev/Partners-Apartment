@@ -95,6 +95,7 @@ const useStyles = makeStyles(theme => ({
       window.location.reload(false);
     }
     const { currentLocation } = props;
+    console.log("currenct location in header = ", currentLocation)
     return(
       <Container maxWidth="lg">
         <Toolbar className={classes.toolbar}>

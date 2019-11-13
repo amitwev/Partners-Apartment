@@ -42,10 +42,10 @@ class UserDetails extends Component{
     constructor(){
         super(); 
         this.state = {
-            userId:'',
+            id:'',
             email:'', 
-            firstName:'',
-            lastName:'',
+            firstname:'',
+            lastname:'',
             phone:'',
             apartmentId:'', 
             loading: true,
@@ -61,10 +61,10 @@ class UserDetails extends Component{
                 })
             });
             this.setState({
-                userId: userDetails.id, 
+                id: userDetails.id, 
                 email: userDetails.email, 
-                firstName: userDetails.firstName, 
-                lastName: userDetails.lastName, 
+                firstname: userDetails.firstname, 
+                lastname: userDetails.lastname, 
                 phone: userDetails.phone, 
                 loading: false
             });
@@ -76,10 +76,31 @@ class UserDetails extends Component{
     componentDidMount(){
         const userEmail = localStorage.getItem('email');
         this.getUserDetails(userEmail);
+        console.log("Component did mount generated");
     }
+    onSubmit = async (event) => {
+        console.log("clicked submit");
+        event.preventDefault();
+        const url = '/updateExistUser';
+        const options = {
+            method:'PUT', 
+            body:JSON.stringify(this.state), 
+        }
+        const result = authHelper.fetch(url, options)
+        console.log("Result at client = ", result);
+    }
+    handleChange = (event) => {
+        console.log(event.target)
+        const name = event.target.name; 
+        const value = event.target.value;
+        this.setState({
+          [name]: value
+        })
+        console.log("state = ", this.state)
+      }
     render(){
         const { classes } = this.props;
-        const {email, userId, firstName, lastName, phone, apartmentId, loading} = this.state;
+        const { loading } = this.state;
         if(loading){
             console.log("inisde loading")
             return(
@@ -94,22 +115,22 @@ class UserDetails extends Component{
                     <CssBaseline />
                     <div className={classes.paper}>
                     <Typography component="h1" variant="h5">
-                        Update user details
+                        Update user Details
                     </Typography>
                     <form className={classes.form} noValidate name="register" onSubmit={this.onSubmit}>
                         <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
                             autoComplete="fname"
-                            name="firstName"
+                            name="firstname"
                             variant="outlined"
                             required
                             fullWidth
-                            id="firstName"
+                            id="firstname"
                             label="First Name"
                             autoFocus
                             onChange={this.handleChange}
-                            value={this.state.firstName}
+                            value={this.state.firstname}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -117,12 +138,12 @@ class UserDetails extends Component{
                             variant="outlined"
                             required
                             fullWidth
-                            id="lastName"
+                            id="lastname"
                             label="Last Name"
-                            name="lastName"
+                            name="lastname"
                             autoComplete="lname"
                             onChange={this.handleChange}
-                            value={this.state.lastName}
+                            value={this.state.lastname}
                             />
                         </Grid>
                         <Grid item xs={12}>
