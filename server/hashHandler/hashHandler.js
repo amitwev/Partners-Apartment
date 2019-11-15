@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt'); 
+const bcrypt = require('bcryptjs'); 
 console.log("inside hash handler ");
 const saltRounds = 10;
 module.exports = {
