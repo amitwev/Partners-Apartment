@@ -27,19 +27,6 @@ module.exports = function(app){
     app.get('/getApartmentDetails', jwt.getExpressJwt(), async (req, res) => {
         console.log("inside get apartment details")
     })
-    app.post('/getUserApartmentId', jwt.getExpressJwt(), async (req, res) => {
-        const { email } = req.body;
-        console.log("inside get user apartment details", email)
-        const queryStr = `SELECT * FROM usersapartments where email =$1`;
-        const values = [email];
-        const queryObj = {
-            text: queryStr, 
-            values: values
-        }
-        const result = await db.queryObj(queryObj); 
-        console.log(result);
-        res.status(200).json(result);
-    })
     app.post('/updateApartmentDetails',jwt.getExpressJwt(), async (req, res) => {
         console.log("inside get apartment details")
     })
@@ -163,6 +150,27 @@ module.exports = function(app){
             res.status(200).json(result)
         }else{
             res.status(409).json(response)
+        }
+    }),
+    app.post('/apartment/updateApartmentDetails', jwt.getExpressJwt(), async (req, res) => {
+        try{
+            const { id, name, street, number, city, country } = req.body; 
+            console.log("inside update apartment", id, name, street, number, city, country);
+            const queryStr = `UPDATE apartments SET name=$1, street=$2, number=$3, city=$4, country=$5 where apartmentid = $6`;
+            const value = [ name, street, parseInt(number), city, country, id ];
+            const queryObj = {
+                text: queryStr, 
+                values: value
+            }
+            const result = await db.queryObj(queryObj); 
+            console.log("response = ", result)
+            if(result.rowCount > 0){
+                res.status(200).json(result)
+            }else{
+                res.status(409).json(result)
+            }
+        }catch(e){
+            res.status(400).json(e);
         }
     })
 }

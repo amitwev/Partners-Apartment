@@ -15,5 +15,57 @@ module.exports = function(app){
         const result = await db.queryObj(queryObj); 
         console.log("result to update query = ",result)
         res.status(200).json(result);
+    }),
+    app.post('/getUserDetails', jwt.getExpressJwt(), async (req, res) => {
+        try{    
+            const { email } = req.body; 
+            console.log("inside get user details", req.body);
+            const query = `select users.id, users.email, users.firstname, users.lastname, users.phone, users.apartmentid,  
+                                apartments.apartmentid, apartments.name AS apartmentname, apartments.street AS apartmentstreet, 
+                                apartments.number AS apartmentnumber, apartments.city AS apartmentcity, 
+                                apartments.country AS apartmentcountry
+                            from users,apartments 
+                            where users.apartmentid=apartments.apartmentid 
+                                and email=$1`
+            const value = [email]
+            const obj = {
+                text: query, 
+                values: value
+            }
+            const userDetails = await db.queryObj(obj)
+            console.log("details from user", userDetails);
+            if(userDetails.rows.length > 0 ){
+                const user = {
+                        id: userDetails.rows[0].id, 
+                        email: userDetails.rows[0].email, 
+                        firstname: userDetails.rows[0].firstname, 
+                        lastname: userDetails.rows[0].lastname, 
+                        phone:userDetails.rows[0].phone, 
+                }
+                const apartment = {
+                        id: userDetails.rows[0].apartmentid, 
+                        name:userDetails.rows[0].apartmentname, 
+                        street: userDetails.rows[0].apartmentstreet, 
+                        number:userDetails.rows[0].apartmentnumber, 
+                        city:userDetails.rows[0].apartmentcity, 
+                        country:userDetails.rows[0].apartmentcountry, 
+                }
+                console.log("inside the if", userDetails)
+                console.log("this is user obj = ", user)
+                console.log("this is apartment = ", apartment)
+                res.status(200).json({
+                    user: user, 
+                    apartment: apartment
+                })
+            }else{
+                console.log("inside the else")
+                res.status(404).json({
+                    hasError: true, 
+                })
+            }
+        }
+        catch(e){
+            res.status(409).json(e)
+        }
     })
 }

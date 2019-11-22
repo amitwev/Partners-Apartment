@@ -38,7 +38,7 @@ module.exports = function(app){
     app.post('/Register', async (req,res) => {
         const { email, password, firstName, lastName, phone } = req.body;
         const queryUser = {
-            text: `insert into users("firstName", "lastName", email, phone) VALUES($1, $2, $3, $4)`,
+            text: `insert into users("firstname", "lastname", email, phone) VALUES($1, $2, $3, $4)`,
             values: [firstName, lastName, email, phone]    
         }
         const hashPassword = await passHandler.encrypt(password); 

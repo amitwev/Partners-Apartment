@@ -7,7 +7,7 @@ import AuthHelper from '../AuthHelper/AuthHelper';
 import Footer from './Footer'; 
 import Header from './Header';
 import UserDetails from '../Main/UserDetails';
-import ApartmentDetails from '../Main/ApartmentDetails'; 
+import ApartmentDetails from '../Main/Apartment/ApartmentDetails'; 
 import Summary from '../Main/Summary';
 import Notes from '../Main/Notes';
 import Loading from '../Loading/Loading';
@@ -24,10 +24,15 @@ class Layout extends Component{
                 firstName:'', 
                 lastName:'', 
                 phone:'',
+                id:''
             },
             apartment:{
-                hasApartment:'',
-                apartmentid:''
+                id:'',
+                name:'', 
+                street:'',
+                number:'',
+                city:'',
+                country:''
             }, 
             loading:true
         }
@@ -35,21 +40,7 @@ class Layout extends Component{
     async getUserDetails(email){
         try{
             console.log("inside get user details");
-            return await authHelper.fetch('getUserDetails', {
-                method: 'POST',
-                body:JSON.stringify({
-                    email: email
-                })
-            });
-        }catch(error){
-            console.log("there was error fetch user details, ", error);
-        }
-
-    }
-    async getUserApartment(email){
-        try{
-            console.log("inside get user apartment id");
-            return await authHelper.fetch('getUserApartmentId', {
+            return await authHelper.fetch('/getUserDetails', {
                 method: 'POST',
                 body:JSON.stringify({
                     email: email
@@ -63,24 +54,32 @@ class Layout extends Component{
         //{"rowCount":0,"rows":[]}
         //{"id":70,"email":"amit@glo.com","firstname":"amit","lastname":"wev","phone":"054625841"}
         const userEmail = localStorage.getItem('email');
+
         const userDetails = this.getUserDetails(userEmail);
+        console.log("user Details from fetch =",userEmail, userDetails)
             Promise.all([ userDetails ])
             .then(([userDetails]) => {
+                const user= userDetails.user;
+                const apartment = userDetails.apartment;
                 this.setState({
-                    user:{
-                        id:userDetails.id,
-                        email:userDetails.email, 
-                        firstName:userDetails.firstname,
-                        lastName:userDetails.lastname,
-                        phone:userDetails.phone,
+                    user: {
+                        email:user.email,
+                        firstName:user.firstname, 
+                        lastName:user.lastname, 
+                        phone:user.phone,
+                        id:user.id
                     },
                     apartment:{
-                        apartmentId:userDetails.apartmentid, 
+                        id:apartment.id,
+                        name:apartment.name, 
+                        street:apartment.street,
+                        number:apartment.number,
+                        city:apartment.city,
+                        country:apartment.country
                     },
-                    loading: false
+                    loading:false
                 })
             })
-            .then(console.log(this.state))
     }
     render(){
         if(this.state.loading){
@@ -88,11 +87,12 @@ class Layout extends Component{
                 <Loading />
             )
         }else{
+            console.log("THE STATET = ", this.state)
             return( 
                 <BrowserRouter>
                     <Header currentLocation={this.props.location.pathname}/>
                     <Switch>
-                        <Route path="/Homepage" component={Summary} exact/>
+                        <Route path="/Homepage" component={Summary}  exact/>
                         <Route path="/ApartmentDetails" render={() => 
                             <ApartmentDetails 
                                 user={this.state.user} 

@@ -4,9 +4,10 @@ import { Container, Typography, withStyles } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import NewApartmentModal from './NewApartmentModal';
 import AssignToApartmentModal from './AssignToApartmentModal';
-import Modal from '../Materials/Modal';
-import AuthHelper from '../AuthHelper/AuthHelper'; 
-import Loading from '../Loading/Loading';
+import Modal from '../../Materials/Modal';
+import AuthHelper from '../../AuthHelper/AuthHelper'; 
+import Loading from '../../Loading/Loading';
+import UserWithApartment from './UserWithApartment';
 const authHelper = new AuthHelper();
 
 const styles = theme => ({
@@ -180,14 +181,41 @@ const styles = theme => ({
             loading:true
         })
     }
+    updateApartmentDetails = async (event) => {
+        try{
+            event.preventDefault();
+            this.loading(); 
+            const data = JSON.stringify(this.state.apartmentDetails);
+            console.log("inside update apartment details, data = ", data);
+            const url ='/apartment/updateApartmentDetails'; 
+            const options ={ 
+                method:'POST', 
+                body: JSON.stringify(this.state.apartmentDetails)
+            }
+            const apartmentUpdate = await authHelper.fetch(url, options);
+            console.log("result from uupdate apartment =", apartmentUpdate);
+            this.setState({
+                resultModal:{
+                    showModal:true,  
+                    responseModal:(apartmentUpdate.rowCount > 0),//This is which modal we need to show/ success or failed 
+                    title:(apartmentUpdate.rowCount > 0)? 'Success':'Error',
+                    content:(apartmentUpdate.rowCount > 0)? 'Your apartment details updated':'Please try again!',
+                },
+                loading:false
+            })
+        }catch(e){
+            console.log(e)
+        }
+    }
     render(){
+        console.log("STATE in render apartment =" ,this.state)
         const { classes } = this.props;
         if(this.state.loading){
             return(
                 <Loading />
             )
         }
-        else if(!this.state.apartmentDetails.apartmentId){
+        else if(!this.state.apartmentDetails.id){
             //user that dont have apartment -> assign or create new apartment
             return(
                 <div>
@@ -257,7 +285,18 @@ const styles = theme => ({
             //handle users that assign to exist apartment
             return(
                 <div>
-                    users with apartment
+                    <UserWithApartment apartment={this.state.apartmentDetails} 
+                                       handleChange={this.handleChange}
+                                       updateApartmentDetails={this.updateApartmentDetails}/>
+                    {// this is to show result for add new apartment - need to add option for assign to new apartment
+                    (this.state.resultModal.showModal)?
+                    <Modal showModal={true} 
+                            status={true} 
+                            closeModal={this.closeModal}
+                            title={this.state.resultModal.title}
+                            content={this.state.resultModal.content}/> 
+                        :<div></div>        
+                    }
                 </div>
             )
         }
