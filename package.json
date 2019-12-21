@@ -8,14 +8,8 @@
     "npm": "6.12.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-<<<<<<< HEAD
+    "test": "echo \"Error: no test specifid\" && exit 1",
     "start": "nodemon index.js"
-=======
-    "nodemon": "nodemon index.js",
-    "start": "node index.js",
-    "heroku-postbuild": "cd client && npm install && npm install --only=dev --no-shrinkwrap && npm run build"
->>>>>>> 9a7b8b13d31404fc429e638c125588257742f033
   },
   "keywords": [],
   "author": "",
