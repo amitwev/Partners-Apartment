@@ -54,7 +54,6 @@ class Layout extends Component{
         //{"rowCount":0,"rows":[]}
         //{"id":70,"email":"amit@glo.com","firstname":"amit","lastname":"wev","phone":"054625841"}
         const userEmail = localStorage.getItem('email');
-
         const userDetails = this.getUserDetails(userEmail);
         console.log("user Details from fetch =",userEmail, userDetails)
             Promise.all([ userDetails ])

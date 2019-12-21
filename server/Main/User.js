@@ -20,13 +20,9 @@ module.exports = function(app){
         try{    
             const { email } = req.body; 
             console.log("inside get user details", req.body);
-            const query = `select users.id, users.email, users.firstname, users.lastname, users.phone, users.apartmentid,  
-                                apartments.apartmentid, apartments.name AS apartmentname, apartments.street AS apartmentstreet, 
-                                apartments.number AS apartmentnumber, apartments.city AS apartmentcity, 
-                                apartments.country AS apartmentcountry
-                            from users,apartments 
-                            where users.apartmentid=apartments.apartmentid 
-                                and email=$1`
+            const query = `select *
+                            from users
+                            where email=$1`
             const value = [email]
             const obj = {
                 text: query, 
@@ -61,6 +57,7 @@ module.exports = function(app){
                 console.log("inside the else")
                 res.status(404).json({
                     hasError: true, 
+                    error: userDetails
                 })
             }
         }
